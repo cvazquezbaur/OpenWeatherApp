@@ -16,8 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentContainerView
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.mlb.weather.presentation.WeatherLandingFragment
+import com.mlb.weather.presentation.Weather
+import com.mlb.weather.presentation.WeatherInfo
 import com.mlb.weather.ui.theme.MLB_WeatherAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -29,30 +32,19 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppLaunch() {
     val navController = rememberNavController()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Weather Report") } )
-         },
-        modifier = Modifier.fillMaxSize()
+    NavHost(
+        navController = navController,
+        startDestination = "weather_page"
     ) {
-        Text(
-            text = "Weather Report",
-            modifier = Modifier.padding(it)
-        )
-//        NavigationGraph(navController = navController, modifier = Modifier.padding(it))
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MLB_WeatherAppTheme {
-//        Greeting("Android")
+        composable("weather_page") {
+            Weather(navController)
+        }
+        composable("weather_info") {
+            WeatherInfo(navController)
+        }
     }
 }
