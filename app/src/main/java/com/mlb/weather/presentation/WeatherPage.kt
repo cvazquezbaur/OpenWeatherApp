@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -29,9 +28,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.mlb.weather.data.JsonHandler
+import com.mlb.weather.models.City
 import com.mlb.weather.models.WeatherItem
-import com.mlb.weather.models.WeatherReport
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,19 +50,21 @@ fun Weather(navController: NavHostController, viewModel: WeatherPageViewModel = 
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            zipCodeTextField(viewModel).takeIf { viewModel.zipCode.value == null }
+            ZipCodeTextField(viewModel).takeIf { viewModel.zipCode.value == null }
                 ?:
-            if (viewModel.zipCode.value == null) { zipCodeTextField(viewModel) }
+            if (viewModel.zipCode.value == null) { ZipCodeTextField(viewModel) }
             else {
                 viewModel.callWeatherApi(viewModel.zipCode.value!!)
-                viewModel.getWeatherData()?.let { WeatherList(it, navController) }
+                viewModel.getWeatherData()?.let {
+                    WeatherList(it, viewModel.city.value!!, navController)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun zipCodeTextField(viewModel: WeatherPageViewModel) {
+private fun ZipCodeTextField(viewModel: WeatherPageViewModel) {
     var text by remember { mutableStateOf("") }
     TextField(
         value = text,
@@ -78,27 +79,30 @@ private fun zipCodeTextField(viewModel: WeatherPageViewModel) {
             viewModel.setZipCode(text)
         },
         content = { Text("Submit") },
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier.padding(horizontal = 16.dp)
     )
 }
 
 @Composable
-private fun WeatherList(weatherReport: List<WeatherItem>, navController: NavHostController) {
+private fun WeatherList(weatherReport: List<WeatherItem>, city: City,navController: NavHostController) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(16.dp)
     ) {
         for (report in weatherReport) {
             item {
-                WeatherCard(report, navController)
+                WeatherCard(report, city, navController)
             }
         }
     }
 }
 
 @Composable
-private fun WeatherCard(weatherReport: WeatherItem, navController: NavHostController) {
+private fun WeatherCard(weatherReport: WeatherItem, city: City, navController: NavHostController) {
+    val jsonHandler = JsonHandler()
+    val weatherReportJson = jsonHandler.encodeToJson(weatherReport)
+    val cityJson = jsonHandler.encodeToJson(city)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,7 +110,7 @@ private fun WeatherCard(weatherReport: WeatherItem, navController: NavHostContro
             .border(1.dp, Color.Black)
             .clickable {
                 Log.d("WeatherCard", "Clicked on ${weatherReport.dt_txt}")
-                navController.navigate("weather_info")
+                navController.navigate("weather_info/${weatherReportJson}/${cityJson}")
             }
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
