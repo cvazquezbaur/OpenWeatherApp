@@ -9,9 +9,7 @@ data class WeatherReport(
     val cnt: Int,
     val list: List<WeatherItem>,
     val city: City
-) {
-    var isSuccessful: Boolean = false
-}
+)
 
 data class WeatherItem(
     val dt: Long,

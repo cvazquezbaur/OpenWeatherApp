@@ -50,13 +50,18 @@ fun Weather(navController: NavHostController, viewModel: WeatherPageViewModel = 
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            ZipCodeTextField(viewModel).takeIf { viewModel.zipCode.value == null }
-                ?:
-            if (viewModel.zipCode.value == null) { ZipCodeTextField(viewModel) }
-            else {
-                viewModel.callWeatherApi(viewModel.zipCode.value!!)
-                viewModel.getWeatherData()?.let {
-                    WeatherList(it, viewModel.city.value!!, navController)
+            when (viewModel.weatherReportState.value) {
+                is WeatherPageViewModel.WeatherReportState.Empty -> {
+                    ZipCodeTextField(viewModel)
+                }
+                is WeatherPageViewModel.WeatherReportState.Loaded -> {
+                    Text(
+                        text = "5 Day Weather Report for ${viewModel.city.value?.name} in 3 Hour Increments",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    viewModel.getWeatherData()
+                        ?.let { WeatherList(it, viewModel.city.value!!, navController) }
                 }
             }
         }
@@ -76,7 +81,7 @@ private fun ZipCodeTextField(viewModel: WeatherPageViewModel) {
     )
     Button(
         onClick = {
-            viewModel.setZipCode(text)
+            viewModel.checkCache(text)
         },
         content = { Text("Submit") },
         modifier = Modifier.padding(horizontal = 16.dp)

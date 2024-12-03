@@ -1,28 +1,36 @@
 package com.mlb.weather
 
-//import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import android.content.Context
-import androidx.test.platform.app.InstrumentationRegistry
-import org.junit.Rule
+import com.mlb.weather.data.Cache
 import org.junit.Test
 import org.junit.Assert.*
-import com.mlb.weather.data.Cache
-import com.mlb.weather.models.WeatherItem
 import com.mlb.weather.presentation.WeatherPageViewModel
-import kotlinx.coroutines.test.runTest
+import org.junit.Before
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.junit.MockitoJUnitRunner
 
+@RunWith(MockitoJUnitRunner::class)
 class WeatherPageViewModelTest {
+    private lateinit var viewModel: WeatherPageViewModel
+    @Mock
+    private lateinit var context: Context
+    @Mock
+    private lateinit var cache: Cache
 
-    private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-    private val cache = Cache(appContext)
-    private val viewModel = WeatherPageViewModel(cache)
+    @Before
+    fun setUp() {
+        context = Mockito.mock(Context::class.java)
+        cache = Mockito.mock(Cache::class.java)
+        viewModel = WeatherPageViewModel(cache)
+    }
 
 
     @Test
-    fun fetchWeatherData() = runTest {
-        viewModel.callWeatherApi("87505")
-        val weatherData = viewModel.getWeatherData()
-        assertNotNull(weatherData)
+    fun fetchWeatherData() {
+        viewModel.callWeatherApi(Mockito.mock())
+        assertNotNull(viewModel.weatherData)
     }
 
     @Test
