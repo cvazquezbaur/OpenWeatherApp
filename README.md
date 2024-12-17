@@ -1,1 +1,1 @@
-Set up a weather App for MLB coding test. I got a bit ambitious with some things. Began trying to implement Room as a DB for chaching, but I had never used it before. I had never used it before, so I cut bait before full integration into my application. I used a navigation graph for composable routing, and some state management. That idea came in much later than it should have, so not as smooth as it could have been (all one fragment) but oh well. A fun project overall!
+Creating a weather app using the OpenWeather API. Caching currently, but going to implement Room.
