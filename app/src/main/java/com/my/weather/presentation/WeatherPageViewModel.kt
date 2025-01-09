@@ -1,5 +1,6 @@
 package com.my.weather.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.my.weather.data.Cache
@@ -32,10 +33,6 @@ class WeatherPageViewModel(cache: Cache) : ViewModel() {
         .build()
     val api = retrofit.create(OpenWeatherApi::class.java)
 
-    fun getWeatherData(): List<WeatherItem>? {
-        return weatherData.value
-    }
-
     fun setZipCode(zipCode: String) {
         _zipCode.value = zipCode
     }
@@ -60,6 +57,7 @@ class WeatherPageViewModel(cache: Cache) : ViewModel() {
                         cache.saveCity(zipCode, city)
                     }
                 } else {
+                    Log.e("didn't work", "didn't work")
                     _weatherReportState.value = WeatherReportState.Error("Error: ${response.code()} - ${response.message()}")
                 }
             } catch (e: Exception) {

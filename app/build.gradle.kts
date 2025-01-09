@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.mlb.weather"
+    namespace = "com.my.weather"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.mlb.weather"
+        applicationId = "com.my.weather"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
